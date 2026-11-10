@@ -702,6 +702,13 @@ function handleKeyboard(event) {
   }
 
   const key = event.key;
+  const focusedControl = event.target.closest?.(
+    "button, a, input, select, textarea",
+  );
+
+  if (key === "Enter" && focusedControl) {
+    return;
+  }
 
   if (key === "Escape") {
     if (elements.historyPanel.classList.contains("is-open")) {
