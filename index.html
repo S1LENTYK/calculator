@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Калькулятор с графическим интерфейсом, историей вычислений и поддержкой клавиатуры."
+    />
+    <meta name="theme-color" content="#0b0d12" />
+    <title>Калькулятор — быстро и точно</title>
+    <script>
+      try {
+        const savedTheme = localStorage.getItem("calculator.theme.v1");
+        const initialTheme =
+          savedTheme === "light" || savedTheme === "dark"
+            ? savedTheme
+            : window.matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark";
+        document.documentElement.dataset.theme = initialTheme;
+      } catch {
+        document.documentElement.dataset.theme = "dark";
+      }
+    </script>
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="src/app.js"></script>
+  </head>
+  <body>
+    <div class="backdrop" aria-hidden="true">
+      <span class="glow glow--one"></span>
+      <span class="glow glow--two"></span>
+      <span class="grid"></span>
+    </div>
+
+    <div class="app">
+      <header class="topbar">
+        <a class="brand" href="./">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect
+                x="5.5"
+                y="4.5"
+                width="21"
+                height="23"
+                rx="6"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <path
+                d="M10.5 11h11M10.5 17h3M16 17h3M21.5 17h.01M10.5 22h3M16 22h3M21.5 22h.01"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <span class="brand-copy">
+            <span class="brand-name">Калькулятор</span>
+            <span class="brand-tagline">быстро и точно</span>
+          </span>
+        </a>
+
+        <div class="topbar-actions">
+          <button
+            class="pill-button history-toggle"
+            id="historyToggle"
+            type="button"
+            aria-controls="historyPanel"
+            aria-expanded="false"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M12 8v4l2.5 1.5M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4 9.4M4 5v4.4h4.4"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>История</span>
+          </button>
+
+          <button
+            class="icon-button"
+            id="themeToggle"
+            type="button"
+            aria-label="Переключить на светлую тему"
+            title="Включить светлую тему"
+          >
+            <svg
+              class="theme-icon theme-icon--sun"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="4"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+            <svg
+              class="theme-icon theme-icon--moon"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.5 8.5 0 1 0 10.2 10.2Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <div class="calculator-app">
+          <section class="calculator-panel" aria-label="Калькулятор">
+            <div class="display" id="display">
+              <div class="display-top">
+                <span class="display-mode">обычный</span>
+                <span class="display-indicator" aria-hidden="true">
+                  <span></span>
+                  готов
+                </span>
+              </div>
+
+              <div class="expression is-empty" id="expression" aria-hidden="true">
+                0
+              </div>
+
+              <div class="result-line">
+                <span class="equals-mark" id="equalsMark" aria-hidden="true">
+                  =
+                </span>
+                <output class="result" id="result" data-size="lg">0</output>
+              </div>
+
+              <div class="display-foot" aria-hidden="true">
+                <span><kbd>Enter</kbd> посчитать</span>
+                <span><kbd>Esc</kbd> очистить</span>
+              </div>
+            </div>
+
+            <div class="keypad" role="group" aria-label="Клавиши калькулятора">
+              <button
+                class="key key--function"
+                type="button"
+                data-action="clear"
+                aria-label="AC — очистить всё"
+              >
+                AC
+              </button>
+              <button
+                class="key key--function"
+                type="button"
+                data-action="backspace"
+                aria-label="Удалить последний символ"
+              >
+                ⌫
+              </button>
+              <button
+                class="key key--function"
+                type="button"
+                data-action="percent"
+                aria-label="Процент"
+              >
+                %
+              </button>
+              <button
+                class="key key--operator"
+                type="button"
+                data-op="÷"
+                aria-label="Разделить"
+              >
+                ÷
+              </button>
+
+              <button class="key" type="button" data-digit="7">7</button>
+              <button class="key" type="button" data-digit="8">8</button>
+              <button class="key" type="button" data-digit="9">9</button>
+              <button
+                class="key key--operator"
+                type="button"
+                data-op="×"
+                aria-label="Умножить"
+              >
+                ×
+              </button>
+
+              <button class="key" type="button" data-digit="4">4</button>
+              <button class="key" type="button" data-digit="5">5</button>
+              <button class="key" type="button" data-digit="6">6</button>
+              <button
+                class="key key--operator"
+                type="button"
+                data-op="−"
+                aria-label="Вычесть"
+              >
+                −
+              </button>
+
+              <button class="key" type="button" data-digit="1">1</button>
+              <button class="key" type="button" data-digit="2">2</button>
+              <button class="key" type="button" data-digit="3">3</button>
+              <button
+                class="key key--operator"
+                type="button"
+                data-op="+"
+                aria-label="Прибавить"
+              >
+                +
+              </button>
+
+              <button
+                class="key key--function"
+                type="button"
+                data-action="sign"
+                aria-label="Сменить знак"
+              >
+                ±
+              </button>
+              <button class="key" type="button" data-digit="0">0</button>
+              <button
+                class="key"
+                type="button"
+                data-action="decimal"
+                aria-label="Десятичная запятая"
+              >
+                ,
+              </button>
+              <button
+                class="key key--equals"
+                type="button"
+                data-action="equals"
+                aria-label="Посчитать"
+              >
+                =
+              </button>
+            </div>
+
+            <p class="sr-only" id="announcer" aria-live="polite"></p>
+          </section>
+
+          <aside
+            class="history-panel"
+            id="historyPanel"
+            aria-label="История вычислений"
+          >
+            <div class="history-head">
+              <div>
+                <span class="eyebrow">последние</span>
+                <h2>История</h2>
+              </div>
+              <div class="history-actions">
+                <button
+                  class="text-button"
+                  id="clearHistory"
+                  type="button"
+                  disabled
+                >
+                  Очистить
+                </button>
+                <button
+                  class="icon-button history-close"
+                  id="historyClose"
+                  type="button"
+                  aria-label="Закрыть историю"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                      d="m6 6 12 12M18 6 6 18"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="history-scroll">
+              <div class="history-list" id="historyList"></div>
+
+              <div class="history-empty" id="historyEmpty">
+                <span class="empty-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M12 8v4l2.5 1.5M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4 9.4M4 5v4.4h4.4"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <p>Здесь появятся вычисления</p>
+                <span>Нажмите на результат, чтобы вернуться к нему</span>
+              </div>
+            </div>
+
+            <div class="history-foot">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect
+                  x="5"
+                  y="10"
+                  width="14"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+                <path
+                  d="M8.5 10V7.5a3.5 3.5 0 1 1 7 0V10"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <span>История хранится только на этом устройстве</span>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <span>Вычисления не покидают ваш браузер</span>
+        <a
+          href="https://github.com/S1LENTYK/calculator"
+          target="_blank"
+          rel="noreferrer"
+        >
+          GitHub
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M7 17 17 7M9 7h8v8"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      </footer>
+    </div>
+  </body>
+</html>

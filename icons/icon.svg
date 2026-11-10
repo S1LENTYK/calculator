@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="32" x2="448" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1b1f29"/>
+      <stop offset="1" stop-color="#0b0d12"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="128" y1="96" x2="400" y2="432" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffb184"/>
+      <stop offset="1" stop-color="#ff7a45"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <rect x="96" y="78" width="320" height="356" rx="62" fill="url(#accent)"/>
+  <rect x="140" y="122" width="232" height="76" rx="22" fill="#1b120c" opacity=".88"/>
+  <g fill="#1b120c" opacity=".88">
+    <rect x="140" y="226" width="62" height="62" rx="18"/>
+    <rect x="225" y="226" width="62" height="62" rx="18"/>
+    <rect x="310" y="226" width="62" height="62" rx="18"/>
+    <rect x="140" y="310" width="62" height="62" rx="18"/>
+    <rect x="225" y="310" width="62" height="62" rx="18"/>
+    <rect x="310" y="310" width="62" height="62" rx="18"/>
+  </g>
+  <circle cx="341" cy="160" r="7" fill="#ffd4bc" opacity=".8"/>
+  <circle cx="363" cy="160" r="7" fill="#ffd4bc" opacity=".55"/>
+</svg>
